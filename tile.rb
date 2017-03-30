@@ -14,6 +14,12 @@ class Tile
     @flagged = !@flagged
   end
 
+  def reset
+    @flagged = false
+    @revealed = false
+    @bomb = false
+  end
+
   def to_s
     return "F" if @flagged
     return "B" if @bomb # TODO remove debug

@@ -36,6 +36,26 @@ class Board
     end
   end
 
+  def reset
+    @grid.each { |row| row.each(&:reset) }
+  end
+
+  def over?
+    lose? || win?
+  end
+
+  def lose?
+    @grid.any? do |row|
+      row.any? { |tile| tile.bomb && tile.revealed }
+    end
+  end
+
+  def win?
+    @grid.all? do |row|
+      row.all? { |tile| tile.bomb || tile.revealed }
+    end
+  end
+
   def render
     @grid.each do |row|
       row.each do |tile|
