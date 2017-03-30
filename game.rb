@@ -14,6 +14,7 @@ class MinesweeperGame
   end
 
   def play_round
-
+    @board.render
+    puts "Enter your move in r,c format"
   end
 end

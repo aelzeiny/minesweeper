@@ -1,9 +1,12 @@
 class Tile
   attr_reader :bomb, :revealed
+  attr_accessor :adjacent_bombs
+
   def initialize(is_bomb = false)
     @bomb = is_bomb
     @revealed = false
     @flagged = false
+    @adjacent_bombs = nil
   end
 
   def rig_bomb
@@ -18,6 +21,7 @@ class Tile
     @flagged = false
     @revealed = false
     @bomb = false
+    @adjacent_bombs = nil
   end
 
   def to_s

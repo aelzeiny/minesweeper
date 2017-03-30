@@ -1,6 +1,9 @@
 require_relative 'tile.rb'
+require 'byebug'
 
 class Board
+  attr_reader :grid
+
   def self.default_grid
     Array.new(9) { Array.new(9) { Tile.new } }
   end
@@ -11,6 +14,7 @@ class Board
 
   def [](pos)
     row, col = pos
+    return nil if row >= row_size 
     @grid[row][col]
   end
 
@@ -34,6 +38,34 @@ class Board
       self[position].rig_bomb
       num_bombs += 1
     end
+    write_adjacent_bombs
+  end
+
+  def write_adjacent_bombs
+    @grid.each_with_index do |row, r|
+      row.each_with_index do |tile, c|
+        begin
+          tile.adjacent_bombs = get_neighbors([r, c]).count(&:bomb)
+        rescue
+          byebug
+        end
+      end
+    end
+  end
+
+  def get_neighbors(pos)
+    neighbors = []
+    # byebug
+    row, col = pos
+    (-1..1).to_a.each do |i|
+      (-1..1).to_a.each do |j|
+        next if row + i < 0 || col + j < 0
+        next if i == 0 && j == 0
+        neighbors << self[[row + i, col + j]]
+      end
+    end
+
+    neighbors.reject(&:nil?)
   end
 
   def reset
@@ -56,12 +88,24 @@ class Board
     end
   end
 
+
+
+
+
+
+
+
   def render
-    @grid.each do |row|
-      row.each do |tile|
+    print "  #{0.upto(row_size - 1).map(&:to_s).join}\n"
+    print " +#{"-" * row_size}+\n"
+    @grid.each_with_index do |row, i|
+      print i
+      print "|"
+      row.each_with_index do |tile, j|
         print tile
       end
-      print "\n"
+      print "|\n"
     end
+    print " +#{"-" * row_size}+\n"
   end
 end
