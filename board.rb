@@ -14,7 +14,7 @@ class Board
 
   def [](pos)
     row, col = pos
-    return nil if row >= row_size 
+    return nil if row >= row_size
     @grid[row][col]
   end
 
@@ -38,17 +38,14 @@ class Board
       self[position].rig_bomb
       num_bombs += 1
     end
-    write_adjacent_bombs
+    write_tile_info
   end
 
-  def write_adjacent_bombs
+  def write_tile_info
     @grid.each_with_index do |row, r|
       row.each_with_index do |tile, c|
-        begin
-          tile.adjacent_bombs = get_neighbors([r, c]).count(&:bomb)
-        rescue
-          byebug
-        end
+        tile.pos = [r, c]
+        tile.adjacent_bombs = get_neighbors([r, c]).count(&:bomb)
       end
     end
   end
@@ -88,12 +85,14 @@ class Board
     end
   end
 
-
-
-
-
-
-
+  def reveal(pos)
+    me = self[pos]
+    return if me.revealed
+    me.reveal
+    return unless me.adjacent_bombs == 0
+    neighbors = get_neighbors(pos)
+    neighbors.each { |neigh| reveal(neigh.pos) }
+  end
 
   def render
     print "  #{0.upto(row_size - 1).map(&:to_s).join}\n"
