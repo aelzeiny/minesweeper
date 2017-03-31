@@ -70,24 +70,36 @@ class Board
   end
 
   def over?
-    lose? || win?
+    lost? || won?
   end
 
-  def lose?
+  def lost?
     @grid.any? do |row|
       row.any? { |tile| tile.bomb && tile.revealed }
     end
   end
 
-  def win?
+  def display_all_bombs
+    @grid.map { |row| row.map(&:lose) }
+  end
+
+  def won?
     @grid.all? do |row|
       row.all? { |tile| tile.bomb || tile.revealed }
     end
   end
 
+  def flag(pos)
+    self[pos].toggle_flag
+  end
+
   def reveal(pos)
     me = self[pos]
     return if me.revealed
+    if me.bomb
+      me.reveal
+      return
+    end
     me.reveal
     return unless me.adjacent_bombs == 0
     neighbors = get_neighbors(pos)

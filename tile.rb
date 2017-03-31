@@ -8,6 +8,7 @@ class Tile
     @flagged = false
     @adjacent_bombs = nil
     @pos = nil
+    @lose = false
   end
 
   def rig_bomb
@@ -22,17 +23,26 @@ class Tile
     @revealed = true
   end
 
+  def lose
+    @lose = true
+  end
+
   def reset
     @flagged = false
     @revealed = false
     @bomb = false
     @adjacent_bombs = nil
+    @lose = false
   end
 
   def to_s
-    return "F" if @flagged
-    return "B" if @bomb # TODO remove debug
-    return "_" if @adjacent_bombs == 0 && @revealed
-    @revealed ? @adjacent_bombs.to_s : "*"
+    return "B" if @bomb && @lose # TODO remove debug
+    if @revealed
+      @adjacent_bombs == 0 ? "_" : @adjacent_bombs.to_s
+    elsif @flagged
+      "F"
+    else
+      "*"
+    end
   end
 end
